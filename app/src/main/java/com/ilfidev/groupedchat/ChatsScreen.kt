@@ -3,6 +3,7 @@ package com.ilfidev.groupedchat
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -48,7 +49,10 @@ fun ChatsArray(){
                     .padding(0.dp, 10.dp),
                 shape = RoundedCornerShape(10.dp)
             ) {
-                counter += 1
+                if(counter < 3){
+
+                    counter += 1
+                }
                 Log.i("Color", counter.toString())
                 GroupBox(item)
             }
@@ -77,11 +81,19 @@ fun ChatsRow(arr: List<String>){
     }
 }
 
+@Composable
+fun SettingsAndStuff(){
+
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatPortrait(name: String){
     Card(
-        modifier = Modifier.size(80.dp, 100.dp),
+        modifier = Modifier
+            .size(80.dp, 100.dp)
+            .clickable {  }
+        ,
     ){
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
