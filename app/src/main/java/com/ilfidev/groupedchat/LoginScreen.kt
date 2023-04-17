@@ -10,6 +10,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -83,6 +84,10 @@ fun LoginBox(){
 
             OutlinedTextField("Login", {})
             OutlinedTextField(value = "Password", onValueChange = {})
+
+            Button(onClick = { /*TODO*/ }) {
+                Text("Next")
+            }
         }
 
     }
@@ -125,6 +130,10 @@ fun RegisterBox(){
             OutlinedTextField(value = loginText, {loginText = it}, label = {Text("Login")})
             OutlinedTextField(value = passwordText, onValueChange = {passwordText = it}, label = {Text("Password")})
             OutlinedTextField(value= passwordRepeate, onValueChange = {passwordRepeate = it}, label = {Text("Password Again")})
+
+            Button(onClick = { /*TODO*/ }) {
+               Text("Next")
+            }
         }
 
     }

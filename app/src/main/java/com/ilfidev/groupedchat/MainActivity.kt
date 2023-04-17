@@ -23,7 +23,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 //                    ChatsArray()
-                    LoggingScreenLayout()
+//                    LoggingScreenLayout()
+                    ScaffoldSample()
                 }
             }
         }
