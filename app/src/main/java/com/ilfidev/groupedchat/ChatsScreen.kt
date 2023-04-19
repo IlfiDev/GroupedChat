@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,67 +34,56 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
-@Preview
 @Composable
 fun ChatsScreen(){
 
 }
-
 
 @Preview
 @Composable
 fun ChatsArray(){
     val arr = listOf("User1", "User2", "User3", "User4")
     val arr2 = listOf(arr, arr, arr, arr, arr)
-    val groupsArr = listOf(arr2, arr2, arr2)
+    val groupsArr = listOf(arr2, arr2)
     var counter = 0
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(20.dp)){
-        items(groupsArr){
-                item ->
 
-            Surface(
-                modifier = Modifier
-                    .border(
-                        2.dp,
-                        Color(0xFFFF0000 + counter * 100),
-                        shape = RoundedCornerShape(10.dp)
-                    )
-                    .padding(0.dp, 10.dp),
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                if(counter < 3){
+    LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(20.dp)){
+        items(groupsArr) { item ->
+            Surface(modifier = Modifier.padding(5.dp)){
 
-                    counter += 1
-                }
-                Log.i("Color", counter.toString())
-                GroupBox(item)
+                GridBox()
             }
         }
+
     }
 }
 
-@Composable
-fun Scaff(){
-
-}
+@Preview
 @Composable
 fun ScaffoldSample(){
 
-    Scaffold(
+    Scaffold(backgroundColor = Color.Gray,
 
         drawerContent = {
+            Text("Drawer title", modifier = Modifier.padding(16.dp))
+            Divider()
+            DrawerContent()
 
         },
         topBar = {
             Box(
             modifier = Modifier
-                .fillMaxWidth().height(50.dp).background(Color.White)
+                .fillMaxWidth()
+                .height(50.dp)
+                .background(Color.White)
             ) {
             Text(
                 text = "This is static content",
@@ -101,78 +91,148 @@ fun ScaffoldSample(){
         }},
     ) {
         contentPadding ->
-        Box(modifier = Modifier.padding(contentPadding))
+        Box(
+            modifier = Modifier.padding(contentPadding),
+            )
+
+//        Column(){
+//            Text("ABOBA")
+//            VerticalGrid(modifier = Modifier
+//                .padding(20.dp),
+//                offset = 5, columns = 2) {
+//
+//                ChatPortrait(name = "Oleg")
+//                ChatPortrait(name = "Ivan")
+//                ChatPortrait(name = "Igor")
+//                ChatPortrait(name = "User")
+//                ChatPortrait(name = "Oleg")
+//                ChatPortrait(name = "Ivan")
+//                ChatPortrait(name = "Igor")
+//                ChatPortrait(name = "User")
+//                ChatPortrait(name = "AAAA")
+//            }
+//            Text("Aboba")
+//        }
+
 
         ChatsArray()
     }
 
 }
+@Preview
+@Composable
+fun GridBox(){
+    Row(modifier = Modifier.fillMaxSize()) {
+        VerticalGrid(
+            modifier = Modifier
+                .padding(20.dp), offset = 5, columns = 3
+        ) {
+
+            ChatPortrait(name = "Oleg")
+            ChatPortrait(name = "Ivan")
+            ChatPortrait(name = "Igor")
+            ChatPortrait(name = "User")
+            ChatPortrait(name = "Oleg")
+            ChatPortrait(name = "Ivan")
+            ChatPortrait(name = "Igor")
+            ChatPortrait(name = "User")
+            ChatPortrait(name = "AAAA")
+            ChatPortrait(name = "SUSER")
+        }
+    }
+}
+@Composable
+fun DrawerContent(){
+    Column(modifier = Modifier.fillMaxSize()){
+        DrawerItem("Account")
+        DrawerItem("Settings")
+        DrawerItem("Other")
+        DrawerItem("Share Account")
+
+    }
+}
+
+@Composable
+fun DrawerItem(text: String){
+    Row(modifier = Modifier
+        .clickable { }
+        .fillMaxWidth()
+        .height(50.dp)
+        .padding(5.dp),
+    horizontalArrangement = Arrangement.Start
+        ){
+        Image(painterResource(R.drawable.ic_launcher_background), contentDescription = null)
+        Text(text)
+    }
+}
 
 
 @Composable
 fun GroupBox(arr: List<List<String>>){
-    DraggableCardComplex(isRevealed = false, cardOffset =10f , onExpand = { /*TODO*/ }) {
+    //DraggableCardComplex(isRevealed = false, cardOffset =10f , onExpand = { /*TODO*/ }) {
 
-    }
     Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
         for (item in arr){
-            ChatsRow(item)
+//            ChatsRow(item)
         }
     }
 
 }
-@OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedTransitionTargetStateParameter")
-@Composable
-fun DraggableCardComplex(
-    isRevealed: Boolean,
-    cardOffset: Float,
-    onExpand: () -> Unit,
-    onCollapse: () -> Unit,
-) {
-    val offsetX by remember { mutableStateOf(0f) }
-    val transitionState = remember {
-        MutableTransitionState(isRevealed).apply {
-            targetState = !isRevealed
-        }
-    }
-    val transition = updateTransition(transitionState)
-    val offsetTransition by transition.animateFloat(
-        label = "cardOffsetTransition",
-        transitionSpec = { tween(durationMillis = ANIMATION_DURATION) },
-        targetValueByState = { if (isRevealed) cardOffset - offsetX else -offsetX },
-    )
 
-    Card(
-        modifier = Modifier
-            .offset { IntOffset((offsetX + offsetTransition).roundToInt(), 0) }
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures { change, dragAmount ->
-                    //TODO
+@Composable
+fun VerticalGrid(
+    modifier: Modifier = Modifier,
+    offset: Int = 0,
+    columns: Int = 2,
+    content: @Composable () -> Unit
+){
+    Layout(
+        content = content,
+        modifier = modifier
+    ){
+        measurables, constraints ->
+        val itemWidth = constraints.maxWidth / columns
+        val itemConstraints = constraints.copy(
+            minWidth = itemWidth - offset,
+            maxWidth = itemWidth,
+            maxHeight = constraints.maxHeight,
+            minHeight = constraints.minHeight
+
+        )
+
+        val placeables = measurables.map { it.measure(itemConstraints)}
+        val height = Math.ceil(placeables.size.toDouble() / columns).toInt()
+        layout(itemConstraints.maxWidth,
+            placeables.maxOfOrNull { (it.height + offset) * height  } ?: 0){
+            var yPosition = 0
+            var xPosition = 0
+            var rowsCounter = 0
+            placeables.forEach{ placeable ->
+
+                if(rowsCounter == columns){
+                    xPosition = 0
+                    yPosition += placeable.height + offset
+                    rowsCounter = 0
                 }
-            },
-        content = { ChatPortrait(name = "Igor") }
-    )
-}
+                placeable.placeRelative(x = xPosition, y = yPosition)
+                rowsCounter += 1
+                xPosition += placeable.width + offset
 
-@Composable
-fun ChatsRow(arr: List<String>){
-    Row(
-        modifier = Modifier.fillMaxSize(),
-        horizontalArrangement = Arrangement.SpaceEvenly
-        ){
-        for (item in arr){
-            ChatPortrait(name = item)
+
+            }
         }
     }
 }
+
+
+
+
 
 @Composable
 fun SettingsAndStuff(){
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatPortrait(name: String){
     Card(
