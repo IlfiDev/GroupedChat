@@ -125,7 +125,7 @@ fun GridBox(){
     Row(modifier = Modifier.fillMaxSize()) {
         VerticalGrid(
             modifier = Modifier
-                .padding(20.dp), offset = 5, columns = 3
+                .padding(20.dp), offset = 10, columns = 3
         ) {
 
             ChatPortrait(name = "Oleg")

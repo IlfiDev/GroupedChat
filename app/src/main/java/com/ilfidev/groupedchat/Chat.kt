@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
@@ -44,9 +46,8 @@ fun ChatBackground(){
     Image(painterResource(id = R.drawable.ic_launcher_background), contentDescription = null)
 }
 
-@Preview
 @Composable
-fun UserMessage(){
+fun UserMessage(message: String){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -55,10 +56,10 @@ fun UserMessage(){
 
         Surface(
             shape = RoundedCornerShape(40),
-            modifier = Modifier.defaultMinSize(50.dp)
+            modifier = Modifier.defaultMinSize(50.dp),color = Color(0xFFE8AD4A)
         ){
-            Row(horizontalArrangement = Arrangement.Center){
-                Text("text" )
+            Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.padding(10.dp)){
+                Text(message )
             }
         }
     }
@@ -66,7 +67,7 @@ fun UserMessage(){
 }
 
 @Composable
-fun OtherMessage(){
+fun OtherMessage(message: String){
 
     Row(
         modifier = Modifier
@@ -76,10 +77,10 @@ fun OtherMessage(){
 
         Surface(
             shape = RoundedCornerShape(40),
-            modifier = Modifier.defaultMinSize(50.dp)
+            modifier = Modifier.defaultMinSize(50.dp), color = Color(0xFF4B9AE9)
         ){
-            Row(horizontalArrangement = Arrangement.Center){
-                Text("Aboba sussus amogus lol" , modifier = Modifier.background(Color.Blue))
+            Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.padding(10.dp)){
+                Text(message)
             }
         }
     }
@@ -90,10 +91,6 @@ fun AudioMessage(){
 
 }
 
-@Composable
-fun MessagesBlock(){
-
-}
 @Preview
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -101,15 +98,25 @@ fun ChatScreen(){
     Scaffold(
         topBar = {
                  Row(modifier = Modifier
-                     .background(Color.Red)
+                     .background(Color(0xFF225F9C))
                      .fillMaxWidth()
-                     .height(50.dp)){
+                     .height(50.dp),
+                     horizontalArrangement = Arrangement.SpaceBetween
+                 ){
+
+                     Image(painterResource(id = R.drawable.ic_launcher_foreground), contentDescription = null)
+                     Row(verticalAlignment = Alignment.CenterVertically){
+
+                         Image(painter = painterResource(id = R.drawable.ic_launcher_background), contentDescription = null,)
+                         Text("Chat Name")
+                     }
+                     Image(painter = painterResource(id = R.drawable.ic_launcher_foreground), contentDescription = null)
 
                  }
         },
         bottomBar = {
             Row(modifier = Modifier
-                .background(Color.Blue)
+                .background(Color(0xFF225F9C))
                 .fillMaxWidth()
                 .height(50.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -122,9 +129,30 @@ fun ChatScreen(){
         }
 
         ){
-        Column(){
-            UserMessage()
-            OtherMessage()
+        Box(modifier = Modifier
+            .background(Color.White)
+            .fillMaxSize())
+
+        LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+            items(listOf(1, 2, 3, 4, 5,)) { item ->
+                MessagesBlock()
+            }
+        }
+
+    }
+}
+
+@Composable
+fun MessagesBlock(){
+    val messagesBlock = listOf("Hi", "Hello there", "Whtcha doin'", "Playing and you?", "I'm coding", "OK")
+    Column {
+        for (i in 0..messagesBlock.size - 1){
+            if (i % 2 == 0){
+                UserMessage(messagesBlock[i])
+            }
+            else{
+                OtherMessage(messagesBlock[i])
+            }
         }
     }
 }

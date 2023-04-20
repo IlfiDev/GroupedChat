@@ -1,5 +1,6 @@
 package com.ilfidev.groupedchat
 
+import androidx.annotation.FloatRange
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -18,6 +19,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.MeasureResult
+import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.layout.Placeable
+import androidx.compose.ui.layout.Placeable.PlacementScope.Companion.placeRelative
+import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.dp
 
 
@@ -30,8 +37,67 @@ fun LoginScreenBacground(){
     }
 }
 
+
 @Composable
-fun LoggingScreenLayout(){
+fun LogingItem(
+    icon: @Composable BoxScope.() -> Unit,
+    text: @Composable BoxScope.() -> Unit,
+    @FloatRange(from = 0.0, to = 1.0) animationProgress: Float
+) {
+    Layout(
+        content = {
+            Box(
+                modifier = Modifier.layoutId("icon"),
+                content = icon
+            )
+            Box(
+                modifier = Modifier.layoutId("text"),
+                content = text
+            )
+        }
+    ){
+        measurables, constraints ->
+        val iconPlaceable = measurables.first{it.layoutId == "icon"}.measure(constraints)
+        val textPlaceable = measurables.first{it.layoutId == "text"}.measure(constraints)
+
+        placeTextAddIcon(
+            textPlaceable,
+            iconPlaceable,
+            constraints.maxWidth,
+            constraints.maxHeight,
+            animationProgress
+        )
+    }
+}
+
+fun MeasureScope.placeTextAddIcon(
+    textPlaceable: Placeable,
+    iconPlaceable: Placeable,
+    width: Int,
+    height: Int,
+    @FloatRange(from = 0.0, to = 1.0) animationProgress: Float
+): MeasureResult{
+    val iconY = (height - iconPlaceable.height) / 2
+    val textY = (height - textPlaceable.height) / 2
+
+    val textWidth = textPlaceable.width * animationProgress
+    val iconX = (width - textWidth - iconPlaceable.width) / 2
+    val textX = iconX + iconPlaceable.width
+
+    return layout(width, height) {
+        iconPlaceable.placeRelative(iconX.toInt(), iconY)
+        if (animationProgress != 0f){
+            textPlaceable.placeRelative(textX.toInt(), textY)
+        }
+    }
+}
+
+@Composable
+fun LoggingScreenLayout(
+    icon: @Composable BoxScope.() -> Unit,
+    text: @Composable BoxScope.() -> Unit,
+    @FloatRange(from = 0.0, to = 1.0) animationProgress: Float
+){
 
     var isVisibleLog by remember { mutableStateOf(false) }
     var isVisibleReg by remember { mutableStateOf(false)}

@@ -24,7 +24,8 @@ class MainActivity : ComponentActivity() {
                 ) {
 //                    ChatsArray()
 //                    LoggingScreenLayout()
-                    ScaffoldSample()
+                    //ScaffoldSample()
+                    ChatScreen()
                 }
             }
         }
