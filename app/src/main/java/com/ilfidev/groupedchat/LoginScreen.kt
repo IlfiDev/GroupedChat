@@ -2,7 +2,9 @@ package com.ilfidev.groupedchat
 
 import androidx.annotation.FloatRange
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
@@ -23,7 +26,6 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.Placeable
-import androidx.compose.ui.layout.Placeable.PlacementScope.Companion.placeRelative
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.dp
 
@@ -39,7 +41,7 @@ fun LoginScreenBacground(){
 
 
 @Composable
-fun LogingItem(
+fun LoginItem(
     icon: @Composable BoxScope.() -> Unit,
     text: @Composable BoxScope.() -> Unit,
     @FloatRange(from = 0.0, to = 1.0) animationProgress: Float
@@ -94,9 +96,7 @@ fun MeasureScope.placeTextAddIcon(
 
 @Composable
 fun LoggingScreenLayout(
-    icon: @Composable BoxScope.() -> Unit,
-    text: @Composable BoxScope.() -> Unit,
-    @FloatRange(from = 0.0, to = 1.0) animationProgress: Float
+
 ){
 
     var isVisibleLog by remember { mutableStateOf(false) }
@@ -111,8 +111,19 @@ fun LoggingScreenLayout(
         horizontalAlignment = Alignment
             .CenterHorizontally
     ){
-        LoginBox()
-        RegisterBox()
+        var enabled by remember { mutableStateOf(false)}
+        var progress by remember{mutableStateOf(0.0f)}
+
+        val animatedProgress by animateFloatAsState(targetValue = progress)
+
+            //LaunchedEffect(enabled)
+            Column (verticalArrangement = Arrangement.SpaceAround, horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.background(Color.Transparent)){
+                LoginBox()
+                RegisterBox()
+            }
+
+
     }
 }
 
@@ -122,85 +133,109 @@ fun LoginBox(){
         mutableStateOf(false)
     }
 
-    AnimatedVisibility(visible = !isVisible,
-        ) {
+
 
         Box(modifier = Modifier
-            .size(100.dp, 50.dp)
+            .defaultMinSize(100.dp, 50.dp)
             .border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp))
             .clickable {
                 isVisible = !isVisible
-            },
+            }
+            .animateContentSize(),
 
             ){
-            Text("Login")
+            Column(){
 
-        }
-    }
-    AnimatedVisibility(visible = isVisible,
-        modifier = Modifier
-            .size(300.dp, 300.dp)
-    ) {
+                Text("Login")
+                if(isVisible){
 
-        Column(
-            modifier = Modifier.border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp)),
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
+                    Column(
+                        modifier = Modifier.border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp)),
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
 
-            OutlinedTextField("Login", {})
-            OutlinedTextField(value = "Password", onValueChange = {})
+                        OutlinedTextField("Login", {})
+                        OutlinedTextField(value = "Password", onValueChange = {})
 
-            Button(onClick = { /*TODO*/ }) {
-                Text("Next")
+                        Button(onClick = { /*TODO*/ }) {
+                            Text("Next")
+                        }
+                    }
+                }
             }
         }
 
-    }
 }
+
 
 @Composable
 fun RegisterBox(){
     var isVisible by remember { mutableStateOf(false) }
-    AnimatedVisibility(visible = !isVisible) {
 
         Box(modifier = Modifier
-            .size(100.dp, 50.dp)
+            .defaultMinSize(100.dp, 50.dp)
             .border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp))
             .clickable {
                 isVisible = !isVisible
-            },
+            }
+            .animateContentSize(),
 
             ){
-            Text("Register")
+            Column(){
 
-        }
-    }
-    AnimatedVisibility(visible = isVisible,
-        modifier = Modifier
-            .size(300.dp, 300.dp)
-    ) {
+                Text("Register")
+                if(isVisible){
+                    Column(
+                        modifier = Modifier.border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp)),
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
+                        var loginText by remember { mutableStateOf("") }
 
-        Column(
-            modifier = Modifier.border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp)),
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            var loginText by remember { mutableStateOf("") }
+                        var passwordText by remember { mutableStateOf("") }
 
-            var passwordText by remember { mutableStateOf("") }
-
-            var passwordRepeate by remember { mutableStateOf("") }
+                        var passwordRepeate by remember { mutableStateOf("") }
 
 
-            OutlinedTextField(value = loginText, {loginText = it}, label = {Text("Login")})
-            OutlinedTextField(value = passwordText, onValueChange = {passwordText = it}, label = {Text("Password")})
-            OutlinedTextField(value= passwordRepeate, onValueChange = {passwordRepeate = it}, label = {Text("Password Again")})
+                        OutlinedTextField(value = loginText, {loginText = it}, label = {Text("Login")})
+                        OutlinedTextField(value = passwordText, onValueChange = {passwordText = it}, label = {Text("Password")})
+                        OutlinedTextField(value= passwordRepeate, onValueChange = {passwordRepeate = it}, label = {Text("Password Again")})
 
-            Button(onClick = { /*TODO*/ }) {
-               Text("Next")
+                        Button(onClick = { /*TODO*/ }) {
+                            Text("Next")
+                        }
+
+                    }
+                }
             }
-        }
 
-    }
+        }
+//    AnimatedVisibility(visible = isVisible,
+//        modifier = Modifier
+//            .size(300.dp, 300.dp)
+//    ) {
+//
+//        Column(
+//            modifier = Modifier.border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp)),
+//            verticalArrangement = Arrangement.SpaceEvenly,
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ){
+//            var loginText by remember { mutableStateOf("") }
+//
+//            var passwordText by remember { mutableStateOf("") }
+//
+//            var passwordRepeate by remember { mutableStateOf("") }
+//
+//
+//            OutlinedTextField(value = loginText, {loginText = it}, label = {Text("Login")})
+//            OutlinedTextField(value = passwordText, onValueChange = {passwordText = it}, label = {Text("Password")})
+//            OutlinedTextField(value= passwordRepeate, onValueChange = {passwordRepeate = it}, label = {Text("Password Again")})
+//
+//            Button(onClick = { /*TODO*/ }) {
+//               Text("Next")
+//            }
+//        }
+//
+//    }
 }
