@@ -28,6 +28,8 @@ import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.ilfidev.groupedchat.Model.Screen
 
 
 @Composable
@@ -95,8 +97,8 @@ fun MeasureScope.placeTextAddIcon(
 }
 
 @Composable
-fun LoggingScreenLayout(
-
+fun LoginScreenLayout(
+navController: NavController
 ){
 
     var isVisibleLog by remember { mutableStateOf(false) }
@@ -114,12 +116,12 @@ fun LoggingScreenLayout(
         var enabled by remember { mutableStateOf(false)}
         var progress by remember{mutableStateOf(0.0f)}
 
-        val animatedProgress by animateFloatAsState(targetValue = progress)
+        //val animatedProgress by animateFloatAsState(targetValue = progress)
 
             //LaunchedEffect(enabled)
             Column (verticalArrangement = Arrangement.SpaceAround, horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.background(Color.Transparent)){
-                LoginBox()
+                LoginBox(navController)
                 RegisterBox()
             }
 
@@ -128,7 +130,7 @@ fun LoggingScreenLayout(
 }
 
 @Composable
-fun LoginBox(){
+fun LoginBox(navController: NavController){
     var isVisible by remember {
         mutableStateOf(false)
     }
@@ -158,7 +160,7 @@ fun LoginBox(){
                         OutlinedTextField("Login", {})
                         OutlinedTextField(value = "Password", onValueChange = {})
 
-                        Button(onClick = { /*TODO*/ }) {
+                        Button(onClick = { navController.navigate(Screen.GroupsScreen.route)}) {
                             Text("Next")
                         }
                     }

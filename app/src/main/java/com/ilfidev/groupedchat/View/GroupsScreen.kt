@@ -1,54 +1,40 @@
 package com.ilfidev.groupedchat
 
-import android.annotation.SuppressLint
-import android.util.Log
-import android.view.FrameMetrics.ANIMATION_DURATION
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import kotlin.math.roundToInt
-@Composable
-fun ChatsScreen(){
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.ilfidev.groupedchat.Model.Screen
+import com.ilfidev.groupedchat.ViewModel.GroupsViewModel
 
+@Composable
+fun GroupScreen(navController: NavController){
+    ScaffoldSample(navController)
 }
 
-@Preview
 @Composable
-fun ChatsArray(){
+fun ChatsArray(viewModel: GroupsViewModel, navController: NavController){
     val arr = listOf("User1", "User2", "User3", "User4")
     val arr2 = listOf(arr, arr, arr, arr, arr)
     val groupsArr = listOf(arr2, arr2)
@@ -59,16 +45,15 @@ fun ChatsArray(){
         items(groupsArr) { item ->
             Surface(modifier = Modifier.padding(5.dp)){
 
-                GridBox()
+                GridBox(viewModel, navController)
             }
         }
 
     }
 }
 
-@Preview
 @Composable
-fun ScaffoldSample(){
+fun ScaffoldSample(navController: NavController, groupsViewModel: GroupsViewModel = viewModel()){
 
     Scaffold(backgroundColor = Color.Gray,
 
@@ -95,49 +80,29 @@ fun ScaffoldSample(){
             modifier = Modifier.padding(contentPadding),
             )
 
-//        Column(){
-//            Text("ABOBA")
-//            VerticalGrid(modifier = Modifier
-//                .padding(20.dp),
-//                offset = 5, columns = 2) {
-//
-//                ChatPortrait(name = "Oleg")
-//                ChatPortrait(name = "Ivan")
-//                ChatPortrait(name = "Igor")
-//                ChatPortrait(name = "User")
-//                ChatPortrait(name = "Oleg")
-//                ChatPortrait(name = "Ivan")
-//                ChatPortrait(name = "Igor")
-//                ChatPortrait(name = "User")
-//                ChatPortrait(name = "AAAA")
-//            }
-//            Text("Aboba")
-//        }
-
-
-        ChatsArray()
+        ChatsArray(viewModel = groupsViewModel, navController)
     }
 
 }
-@Preview
 @Composable
-fun GridBox(){
+fun GridBox(viewmodel: GroupsViewModel, navController: NavController){
+
     Row(modifier = Modifier.fillMaxSize()) {
         VerticalGrid(
             modifier = Modifier
                 .padding(20.dp), offset = 10, columns = 3
         ) {
 
-            ChatPortrait(name = "Oleg")
-            ChatPortrait(name = "Ivan")
-            ChatPortrait(name = "Igor")
-            ChatPortrait(name = "User")
-            ChatPortrait(name = "Oleg")
-            ChatPortrait(name = "Ivan")
-            ChatPortrait(name = "Igor")
-            ChatPortrait(name = "User")
-            ChatPortrait(name = "AAAA")
-            ChatPortrait(name = "SUSER")
+            ChatPortrait(name = "Oleg", navController)
+            ChatPortrait(name = "Ivan", navController)
+            ChatPortrait(name = "Igor", navController)
+            ChatPortrait(name = "User", navController)
+            ChatPortrait(name = "Oleg", navController)
+            ChatPortrait(name = "Ivan", navController)
+            ChatPortrait(name = "Igor", navController)
+            ChatPortrait(name = "User", navController)
+            ChatPortrait(name = "AAAA", navController)
+            ChatPortrait(name = "SUSER", navController)
         }
     }
 }
@@ -234,11 +199,11 @@ fun SettingsAndStuff(){
 }
 
 @Composable
-fun ChatPortrait(name: String){
+fun ChatPortrait(name: String, navController: NavController){
     Card(
         modifier = Modifier
             .size(80.dp, 100.dp)
-            .clickable { }
+            .clickable { navController.navigate(Screen.ChatScreen.route)}
         ,
     ){
         Column(
