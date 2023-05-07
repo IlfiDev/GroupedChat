@@ -1,5 +1,9 @@
 package com.ilfidev.groupedchat
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.util.Log
+import android.widget.Toast
 import androidx.annotation.FloatRange
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -27,8 +31,15 @@ import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.ilfidev.groupedchat.Model.Screen
 
 
@@ -100,6 +111,8 @@ fun MeasureScope.placeTextAddIcon(
 fun LoginScreenLayout(
 navController: NavController
 ){
+    var auth = Firebase.auth
+
 
     var isVisibleLog by remember { mutableStateOf(false) }
     var isVisibleReg by remember { mutableStateOf(false)}
@@ -108,73 +121,82 @@ navController: NavController
     Column(
         modifier = Modifier
             .fillMaxSize(),
-        verticalArrangement = Arrangement
-            .Center,
+        verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment
             .CenterHorizontally
     ){
-        var enabled by remember { mutableStateOf(false)}
-        var progress by remember{mutableStateOf(0.0f)}
 
-        //val animatedProgress by animateFloatAsState(targetValue = progress)
 
-            //LaunchedEffect(enabled)
-            Column (verticalArrangement = Arrangement.SpaceAround, horizontalAlignment = Alignment.CenterHorizontally,
+        Column (verticalArrangement = Arrangement.spacedBy(30.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.background(Color.Transparent)){
-                LoginBox(navController)
-                RegisterBox()
-            }
+            LoginBox(navController, auth)
+            RegisterBox(auth)
+        }
 
 
     }
 }
 
 @Composable
-fun LoginBox(navController: NavController){
-    var isVisible by remember {
-        mutableStateOf(false)
-    }
+fun LoginBox(navController: NavController, auth: FirebaseAuth){
+    var loginText by remember { mutableStateOf("") }
+
+    var passwordText by remember { mutableStateOf("") }
+    val activity = LocalContext.current as Activity
 
 
 
-        Box(modifier = Modifier
-            .defaultMinSize(100.dp, 50.dp)
-            .border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp))
-            .clickable {
-                isVisible = !isVisible
-            }
-            .animateContentSize(),
+    Box(modifier = Modifier
+        .defaultMinSize(100.dp, 50.dp)
+        .border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp))
+        .animateContentSize(),
 
+        ){
+        Column(){
+
+            Text("Login")
+
+            Column(
+                modifier = Modifier.border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp)),
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally
             ){
-            Column(){
 
-                Text("Login")
-                if(isVisible){
+                OutlinedTextField(loginText, { loginText = it})
+                OutlinedTextField(value = passwordText, onValueChange = {passwordText = it})
 
-                    Column(
-                        modifier = Modifier.border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp)),
-                        verticalArrangement = Arrangement.SpaceEvenly,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ){
+                Button(onClick = {
+                    auth.signInWithEmailAndPassword(loginText, passwordText).addOnCompleteListener(activity){
+                        if(it.isSuccessful){
 
-                        OutlinedTextField("Login", {})
-                        OutlinedTextField(value = "Password", onValueChange = {})
-
-                        Button(onClick = { navController.navigate(Screen.GroupsScreen.route)}) {
-                            Text("Next")
+                            navController.navigate(Screen.GroupsScreen.route)
+                        }
+                        else{
+                            Toast.makeText(activity, "Wrong login or password", Toast.LENGTH_SHORT).show()
                         }
                     }
+                }) {
+                    Text("Next")
                 }
             }
         }
-
+    }
 }
 
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
-fun RegisterBox(){
+fun RegisterBox(auth: FirebaseAuth){
     var isVisible by remember { mutableStateOf(false) }
 
+    var loginText by remember { mutableStateOf("") }
+
+    var passwordText by remember { mutableStateOf("") }
+
+    var passwordRepeate by remember { mutableStateOf("") }
+
+    val activity = LocalContext.current as Activity
         Box(modifier = Modifier
             .defaultMinSize(100.dp, 50.dp)
             .border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp))
@@ -193,18 +215,27 @@ fun RegisterBox(){
                         verticalArrangement = Arrangement.SpaceEvenly,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ){
-                        var loginText by remember { mutableStateOf("") }
-
-                        var passwordText by remember { mutableStateOf("") }
-
-                        var passwordRepeate by remember { mutableStateOf("") }
 
 
                         OutlinedTextField(value = loginText, {loginText = it}, label = {Text("Login")})
                         OutlinedTextField(value = passwordText, onValueChange = {passwordText = it}, label = {Text("Password")})
                         OutlinedTextField(value= passwordRepeate, onValueChange = {passwordRepeate = it}, label = {Text("Password Again")})
 
-                        Button(onClick = { /*TODO*/ }) {
+                        Button(onClick = {
+                            auth.createUserWithEmailAndPassword(loginText, passwordText).addOnCompleteListener(activity){
+
+                                if(it.isSuccessful){
+
+                                    Toast.makeText(activity, "Successful", Toast.LENGTH_SHORT).show()
+
+                                }
+                                else{
+                                    Toast.makeText(activity, it.exception.toString(), Toast.LENGTH_SHORT).show()
+                                    Log.e("Firebase", it.exception.toString())
+
+                                }
+                            }
+                        }) {
                             Text("Next")
                         }
 
@@ -213,31 +244,5 @@ fun RegisterBox(){
             }
 
         }
-//    AnimatedVisibility(visible = isVisible,
-//        modifier = Modifier
-//            .size(300.dp, 300.dp)
-//    ) {
-//
-//        Column(
-//            modifier = Modifier.border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp)),
-//            verticalArrangement = Arrangement.SpaceEvenly,
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ){
-//            var loginText by remember { mutableStateOf("") }
-//
-//            var passwordText by remember { mutableStateOf("") }
-//
-//            var passwordRepeate by remember { mutableStateOf("") }
-//
-//
-//            OutlinedTextField(value = loginText, {loginText = it}, label = {Text("Login")})
-//            OutlinedTextField(value = passwordText, onValueChange = {passwordText = it}, label = {Text("Password")})
-//            OutlinedTextField(value= passwordRepeate, onValueChange = {passwordRepeate = it}, label = {Text("Password Again")})
-//
-//            Button(onClick = { /*TODO*/ }) {
-//               Text("Next")
-//            }
-//        }
-//
-//    }
+
 }

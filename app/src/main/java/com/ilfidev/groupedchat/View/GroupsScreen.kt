@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
@@ -43,8 +44,7 @@ fun ChatsArray(viewModel: GroupsViewModel, navController: NavController){
 
     LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(20.dp)){
         items(groupsArr) { item ->
-            Surface(modifier = Modifier.padding(5.dp)){
-
+            Surface(modifier = Modifier.padding(5.dp).border(5.dp, Color.Red, shape = RoundedCornerShape(10.dp))){
                 GridBox(viewModel, navController)
             }
         }
@@ -92,18 +92,18 @@ fun GridBox(viewmodel: GroupsViewModel, navController: NavController){
             modifier = Modifier
                 .padding(20.dp), offset = 10, columns = 3
         ) {
+                ChatPortrait(name = "Oleg", navController)
+                ChatPortrait(name = "Ivan", navController)
+                ChatPortrait(name = "Igor", navController)
+                ChatPortrait(name = "User", navController)
+                ChatPortrait(name = "Oleg", navController)
+                ChatPortrait(name = "Ivan", navController)
+                ChatPortrait(name = "Igor", navController)
+                ChatPortrait(name = "User", navController)
+                ChatPortrait(name = "AAAA", navController)
+                ChatPortrait(name = "SUSER", navController)
+            }
 
-            ChatPortrait(name = "Oleg", navController)
-            ChatPortrait(name = "Ivan", navController)
-            ChatPortrait(name = "Igor", navController)
-            ChatPortrait(name = "User", navController)
-            ChatPortrait(name = "Oleg", navController)
-            ChatPortrait(name = "Ivan", navController)
-            ChatPortrait(name = "Igor", navController)
-            ChatPortrait(name = "User", navController)
-            ChatPortrait(name = "AAAA", navController)
-            ChatPortrait(name = "SUSER", navController)
-        }
     }
 }
 @Composable
