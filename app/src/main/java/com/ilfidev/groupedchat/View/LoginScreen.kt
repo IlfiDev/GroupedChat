@@ -32,7 +32,10 @@ import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -112,10 +115,6 @@ fun LoginScreenLayout(
 navController: NavController
 ){
     var auth = Firebase.auth
-
-
-    var isVisibleLog by remember { mutableStateOf(false) }
-    var isVisibleReg by remember { mutableStateOf(false)}
     LoginScreenBacground()
     Text("GroupedChat")
     Column(
@@ -131,7 +130,7 @@ navController: NavController
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.background(Color.Transparent)){
             LoginBox(navController, auth)
-            RegisterBox(auth)
+            RegisterBox(auth, navController)
         }
 
 
@@ -140,6 +139,7 @@ navController: NavController
 
 @Composable
 fun LoginBox(navController: NavController, auth: FirebaseAuth){
+    var isVisible by remember { mutableStateOf(false) }
     var loginText by remember { mutableStateOf("") }
 
     var passwordText by remember { mutableStateOf("") }
@@ -150,23 +150,26 @@ fun LoginBox(navController: NavController, auth: FirebaseAuth){
     Box(modifier = Modifier
         .defaultMinSize(100.dp, 50.dp)
         .border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp))
+        .clickable { isVisible = !isVisible }
         .animateContentSize(),
 
         ){
-        Column(){
+        Column(horizontalAlignment = Alignment.CenterHorizontally){
 
-            Text("Login")
+            Text("Login", style = TextStyle(fontSize = 16.sp, color = Color.Black))
+            if (isVisible) {
 
-            Column(
-                modifier = Modifier.border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp)),
-                verticalArrangement = Arrangement.SpaceEvenly,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
+                Column(
+                    modifier = Modifier.border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp)),
+                    verticalArrangement = Arrangement.SpaceEvenly,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
 
-                OutlinedTextField(loginText, { loginText = it})
-                OutlinedTextField(value = passwordText, onValueChange = {passwordText = it})
+                    OutlinedTextField(loginText, { loginText = it})
+                    OutlinedTextField(value = passwordText, onValueChange = {passwordText = it})
 
-                Button(onClick = {
+                    Button(onClick = {
+                        navController.navigate(Screen.AddInofScreen.route)
                     auth.signInWithEmailAndPassword(loginText, passwordText).addOnCompleteListener(activity){
                         if(it.isSuccessful){
 
@@ -176,8 +179,9 @@ fun LoginBox(navController: NavController, auth: FirebaseAuth){
                             Toast.makeText(activity, "Wrong login or password", Toast.LENGTH_SHORT).show()
                         }
                     }
-                }) {
-                    Text("Next")
+                    }) {
+                        Text("Next")
+                    }
                 }
             }
         }
@@ -187,7 +191,7 @@ fun LoginBox(navController: NavController, auth: FirebaseAuth){
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun RegisterBox(auth: FirebaseAuth){
+fun RegisterBox(auth: FirebaseAuth, navController: NavController){
     var isVisible by remember { mutableStateOf(false) }
 
     var loginText by remember { mutableStateOf("") }
@@ -222,19 +226,21 @@ fun RegisterBox(auth: FirebaseAuth){
                         OutlinedTextField(value= passwordRepeate, onValueChange = {passwordRepeate = it}, label = {Text("Password Again")})
 
                         Button(onClick = {
-                            auth.createUserWithEmailAndPassword(loginText, passwordText).addOnCompleteListener(activity){
-
-                                if(it.isSuccessful){
-
-                                    Toast.makeText(activity, "Successful", Toast.LENGTH_SHORT).show()
-
-                                }
-                                else{
-                                    Toast.makeText(activity, it.exception.toString(), Toast.LENGTH_SHORT).show()
-                                    Log.e("Firebase", it.exception.toString())
-
-                                }
-                            }
+//                            auth.createUserWithEmailAndPassword(loginText, passwordText).addOnCompleteListener(activity){
+//
+//                                if(it.isSuccessful){
+//
+//                                    Toast.makeText(activity, "Successful", Toast.LENGTH_SHORT).show()
+//                                    navController.navigate(Screen.AddInofScreen.route)
+//
+//                                }
+//                                else{
+//                                    Toast.makeText(activity, it.exception.toString(), Toast.LENGTH_SHORT).show()
+//                                    Log.e("Firebase", it.exception.toString())
+//
+//                                }
+//                            }
+                            navController.navigate(Screen.AddInofScreen.route)
                         }) {
                             Text("Next")
                         }

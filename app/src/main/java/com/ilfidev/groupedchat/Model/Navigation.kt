@@ -10,6 +10,7 @@ import com.ilfidev.groupedchat.ChatScreen
 import com.ilfidev.groupedchat.GroupScreen
 import com.ilfidev.groupedchat.LoginScreenBacground
 import com.ilfidev.groupedchat.LoginScreenLayout
+import com.ilfidev.groupedchat.View.UserInfoFields
 
 import com.ilfidev.groupedchat.ViewModel.GroupsViewModel
 
@@ -27,6 +28,9 @@ fun Navigation (){
             route = Screen.ChatScreen.route
         ){
             ChatScreen()
+        }
+        composable(route = Screen.AddInofScreen.route) {
+            UserInfoFields()
         }
     }
 }
